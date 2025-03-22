@@ -8,6 +8,10 @@ A lightweight npm package that maps musical notes to colors based on the Chrome 
 npm install note-color
 ```
 
+## Demo
+
+Check out the [interactive demo](https://iplanwebsites.github.io/note-color/demo.html) to see the package in action.
+
 ## Features
 
 - Get colors for musical notes based on Chrome Music Lab's palette

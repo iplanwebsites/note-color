@@ -216,13 +216,13 @@ function midiToNoteName(midiNumber) {
 
 /**
  * Gets the color for a musical note
- * @param {string|number|Array<number>} note - Note name (e.g., "C", "Db"), MIDI number, or pitch class set array
+ * @param {string|number} note - Note name (e.g., "C", "Db"), MIDI number, or pitch class (0-11)
  * @param {Object} [options] - Options object
  * @param {string} [options.paletteId] - ID of a predefined palette (default, pastel, monochrome)
  * @param {Array} [options.palette] - Custom color palette array
  * @param {boolean} [options.fullInfo=false] - If true, returns object with name and hex
  * @param {boolean} [options.failSilently=false] - If true, returns null instead of throwing errors
- * @returns {string|Object|Array|null} Hex color code, object with name and hex, array of colors, or null if error and failSilently is true
+ * @returns {string|Object|null} Hex color code, object with name and hex, or null if error and failSilently is true
  */
 function getNoteColor(note, options = {}) {
   let normalizedNote;
@@ -240,20 +240,21 @@ function getNoteColor(note, options = {}) {
 
     // Handle different input types
     if (typeof note === "number") {
-      // Handle MIDI number input
-      if (note < 0 || note > 127) {
-        throw new Error("MIDI note number must be between 0 and 127");
+      if (note >= 0 && note <= 11) {
+        // This is a pitch class (0-11), convert to note name
+        normalizedNote = midiToNoteName(note);
+      } else if (note >= 0 && note <= 127) {
+        // This is a MIDI note number
+        normalizedNote = midiToNoteName(note);
+      } else {
+        // Apply modulo 12 to handle any integer as pitch class
+        const pitchClass = ((note % 12) + 12) % 12;
+        normalizedNote = midiToNoteName(pitchClass);
       }
-      normalizedNote = midiToNoteName(note);
-    } else if (Array.isArray(note)) {
-      // Handle pitch class set
-      return processPitchClassSet(note, palette, options);
     } else if (typeof note === "string") {
       normalizedNote = normalizeNote(note);
     } else {
-      throw new Error(
-        "Note must be a string, MIDI number, or pitch class set array"
-      );
+      throw new Error("Note must be a string or number");
     }
 
     // Find the note in the palette
@@ -271,35 +272,6 @@ function getNoteColor(note, options = {}) {
     }
     throw error;
   }
-}
-
-/**
- * Process a pitch class set and return colors for each pitch class
- * @param {Array<number>} pitchClassSet - Array of pitch class numbers (0-11 representing C through B)
- * @param {Array} palette - The color palette to use
- * @param {Object} options - Options passed from getNoteColor
- * @returns {Array} Array of hex colors or objects (if fullInfo is true)
- */
-function processPitchClassSet(pitchClassSet, palette, options) {
-  // Validate pitch class set
-  if (!pitchClassSet.every((pc) => Number.isInteger(pc))) {
-    throw new Error("Pitch class set must contain only integers");
-  }
-
-  // Apply modulo 12 to all pitch classes
-  const normalizedSet = pitchClassSet.map((pc) => ((pc % 12) + 12) % 12);
-
-  // Convert pitch classes to note names and then to colors
-  return normalizedSet.map((pc) => {
-    const noteName = midiToNoteName(pc);
-    const noteData = palette.find((item) => item.note === noteName);
-
-    if (!noteData) {
-      throw new Error(`Note for pitch class ${pc} not found in palette`);
-    }
-
-    return options.fullInfo ? noteData : noteData.hex;
-  });
 }
 
 /**

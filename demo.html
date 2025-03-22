@@ -12,7 +12,7 @@
       background-color: #f5f5f5;
     }
     .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
       background-color: white;
       padding: 20px;
@@ -86,64 +86,205 @@
       color: white;
       font-weight: bold;
     }
+    .palette-selector, .note-input {
+      margin: 15px 0;
+    }
+    .palette-selector select, .note-input input, .note-input button {
+      padding: 8px 12px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+    .note-input button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    .note-input button:hover {
+      background-color: #45a049;
+    }
+    .tab-container {
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+    .tab-button {
+      background-color: #f1f1f1;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 4px 4px 0 0;
+      margin-right: 5px;
+    }
+    .tab-button.active {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+      padding: 15px 0;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .feature-card {
+      border: 1px solid #eee;
+      border-radius: 4px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .feature-card h3 {
+      margin-top: 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    }
+    .notation-example {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 15px 0;
+    }
+    .notation-item {
+      padding: 5px 10px;
+      background-color: #f1f1f1;
+      border-radius: 20px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>note-color Package Demo</h1>
     
-    <div class="info-section">
-      <h2>Interactive Piano</h2>
-      <p>Click on a key to see its corresponding color:</p>
-      <div class="piano">
-        <!-- White keys -->
-        <div class="white-key" data-note="C">C</div>
-        <div class="white-key" data-note="D">D</div>
-        <div class="white-key" data-note="E">E</div>
-        <div class="white-key" data-note="F">F</div>
-        <div class="white-key" data-note="G">G</div>
-        <div class="white-key" data-note="A">A</div>
-        <div class="white-key" data-note="B">B</div>
+    <div class="tab-container">
+      <button class="tab-button active" data-tab="interactive">Interactive</button>
+      <button class="tab-button" data-tab="features">Features</button>
+      <button class="tab-button" data-tab="documentation">Documentation</button>
+    </div>
+    
+    <div id="interactive" class="tab-content active">
+      <div class="info-section">
+        <h2>Interactive Piano</h2>
+        <p>Click on a key to see its corresponding color:</p>
+        <div class="piano">
+          <!-- White keys -->
+          <div class="white-key" data-note="C">C</div>
+          <div class="white-key" data-note="D">D</div>
+          <div class="white-key" data-note="E">E</div>
+          <div class="white-key" data-note="F">F</div>
+          <div class="white-key" data-note="G">G</div>
+          <div class="white-key" data-note="A">A</div>
+          <div class="white-key" data-note="B">B</div>
+          
+          <!-- Black keys -->
+          <div class="black-key" style="left: 9%" data-note="C#">C#</div>
+          <div class="black-key" style="left: 23%" data-note="D#">D#</div>
+          <div class="black-key" style="left: 52%" data-note="F#">F#</div>
+          <div class="black-key" style="left: 66%" data-note="G#">G#</div>
+          <div class="black-key" style="left: 80%" data-note="A#">A#</div>
+        </div>
         
-        <!-- Black keys -->
-        <div class="black-key" style="left: 9%" data-note="C#">C#</div>
-        <div class="black-key" style="left: 23%" data-note="D#">D#</div>
-        <div class="black-key" style="left: 52%" data-note="F#">F#</div>
-        <div class="black-key" style="left: 66%" data-note="G#">G#</div>
-        <div class="black-key" style="left: 80%" data-note="A#">A#</div>
+        <div class="palette-selector">
+          <label for="palette-select">Choose a palette: </label>
+          <select id="palette-select">
+            <option value="default">Default (Chrome Music Lab)</option>
+            <option value="pastel">Pastel</option>
+            <option value="monochrome">Monochrome</option>
+          </select>
+        </div>
+        
+        <div class="color-display" id="colorDisplay">Click a key above</div>
+        
+        <div class="note-input">
+          <label for="custom-note">Try any notation or number: </label>
+          <input type="text" id="custom-note" placeholder="e.g., Bb, do, sol#, -1, 60">
+          <button id="apply-note">Apply</button>
+        </div>
       </div>
       
-      <div class="color-display" id="colorDisplay">Click a key above</div>
+      <div class="info-section">
+        <h2>All Note Colors</h2>
+        <div class="note-list" id="noteList"></div>
+      </div>
     </div>
     
-    <div class="info-section">
-      <h2>All Note Colors</h2>
-      <div class="note-list" id="noteList"></div>
+    <div id="features" class="tab-content">
+      <div class="feature-card">
+        <h3>Supported Note Notations</h3>
+        <p>Click on any notation to see its color:</p>
+        <div class="notation-example" id="notation-examples">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+      
+      <div class="feature-card">
+        <h3>Pitch Class & MIDI Number Support</h3>
+        <p>The package supports pitch classes (0-11) and MIDI numbers:</p>
+        <div class="notation-example" id="number-examples">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+      
+      <div class="feature-card">
+        <h3>Multiple Color Palettes</h3>
+        <p>Switch between different color palettes:</p>
+        <div class="palette-selector">
+          <label for="features-palette-select">Choose a palette: </label>
+          <select id="features-palette-select">
+            <option value="default">Default (Chrome Music Lab)</option>
+            <option value="pastel">Pastel</option>
+            <option value="monochrome">Monochrome</option>
+          </select>
+        </div>
+        <div class="note-list" id="palette-preview"></div>
+      </div>
     </div>
     
-    <div class="info-section">
-      <h2>Usage Examples</h2>
-      <pre>
+    <div id="documentation" class="tab-content">
+      <div class="info-section">
+        <h2>Usage Examples</h2>
+        <pre>
 // Install the package
 npm install note-color
 
 // Import the package
-import getNoteColor from 'note-color';
+import getNoteColor, { getAvailablePalettes, PALETTES } from 'note-color';
 
-// Get color by note name
+// Basic usage - get color by note name
 const cColor = getNoteColor('C');  // Returns "#e23058"
 
 // Get color for different note formats
 getNoteColor('Bb');     // Same as A#: "#a247be"
 getNoteColor('c#');     // Works with lowercase: "#f7583a"
+getNoteColor('do');     // Latin solfège for C: "#e23058"
+getNoteColor('sol#');   // Latin solfège for G#: "#3161a3"
+getNoteColor('ré');     // Accented solfège: "#f8943e"
 
 // Get color by MIDI number
 getNoteColor(60);       // Middle C: "#e23058"
 getNoteColor(61);       // C#: "#f7583a"
 
+// Get color by pitch class (0-11)
+getNoteColor(0);        // C: "#e23058"
+getNoteColor(7);        // G: "#11826e"
+
+// Pitch class wrapping (modulo 12)
+getNoteColor(12);       // Same as 0 (C): "#e23058"
+getNoteColor(-1);       // Same as 11 (B): "#e957b2"
+
 // Get full information including name
 const noteInfo = getNoteColor('F', { fullInfo: true });
 // Returns: { note: 'F', name: 'Yellow-Green', hex: '#95c531' }
+
+// Use predefined palettes
+getNoteColor('C', { paletteId: 'pastel' });  // "#ffb3ba"
+getNoteColor('D', { paletteId: 'monochrome' });  // "#333333"
+
+// See available palettes
+const palettes = getAvailablePalettes();  // ["default", "pastel", "monochrome"]
 
 // Create a custom palette
 const customPalette = [
@@ -154,65 +295,229 @@ const customPalette = [
 
 // Use custom palette
 getNoteColor('C', { palette: customPalette });  // "#ff0000"
-      </pre>
+
+// Handle errors silently
+getNoteColor('Z', { failSilently: true });  // null instead of throwing
+        </pre>
+      </div>
     </div>
   </div>
 
-  <script>
-    // Simple implementation of getNoteColor for demo purposes
-    function getNoteColor(note, options = {}) {
-      const DEFAULT_PALETTE = [
-        { note: 'C', name: 'Amaranth', hex: '#e23058' },
-        { note: 'C#', name: 'Orange Soda', hex: '#f7583a' },
-        { note: 'D', name: 'Royal Orange', hex: '#f8943e' },
-        { note: 'D#', name: 'Saffron', hex: '#f3b72f' },
-        { note: 'E', name: 'Dandelion', hex: '#edd92a' },
-        { note: 'F', name: 'Yellow-Green', hex: '#95c531' },
-        { note: 'F#', name: 'Apple', hex: '#55a753' },
-        { note: 'G', name: 'Deep Green-Cyan Turquoise', hex: '#11826e' },
-        { note: 'G#', name: 'Lapis Lazuli', hex: '#3161a3' },
-        { note: 'A', name: 'Iris', hex: '#5b37cb' },
-        { note: 'A#', name: 'Purple Plum', hex: '#a247be' },
-        { note: 'B', name: 'Brilliant Rose', hex: '#e957b2' }
-      ];
-      
-      const palette = options.palette || DEFAULT_PALETTE;
-      const noteData = palette.find(item => item.note === note);
-      
-      if (!noteData) {
-        return '#cccccc';
-      }
-      
-      return options.fullInfo ? noteData : noteData.hex;
-    }
+  <script type="module">
+    // Import the note-color package
+    import getNoteColor, { getAvailablePalettes, PALETTES } from './index.js';
 
     // Initialize the demo
     document.addEventListener('DOMContentLoaded', function() {
       const colorDisplay = document.getElementById('colorDisplay');
       const noteList = document.getElementById('noteList');
+      const paletteSelect = document.getElementById('palette-select');
+      const featuresPaletteSelect = document.getElementById('features-palette-select');
+      const customNoteInput = document.getElementById('custom-note');
+      const applyNoteButton = document.getElementById('apply-note');
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const tabContents = document.querySelectorAll('.tab-content');
+      const notationExamples = document.getElementById('notation-examples');
+      const numberExamples = document.getElementById('number-examples');
+      const palettePreview = document.getElementById('palette-preview');
+      
+      let currentPalette = 'default';
+      
+      // Tab switching
+      tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const tabId = this.getAttribute('data-tab');
+          
+          // Update buttons
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Update content
+          tabContents.forEach(content => {
+            content.classList.remove('active');
+            if (content.id === tabId) {
+              content.classList.add('active');
+            }
+          });
+        });
+      });
       
       // Piano key click handler
       const keys = document.querySelectorAll('.white-key, .black-key');
       keys.forEach(key => {
         key.addEventListener('click', function() {
           const note = this.dataset.note;
-          const noteInfo = getNoteColor(note, { fullInfo: true });
-          colorDisplay.style.backgroundColor = noteInfo.hex;
-          colorDisplay.textContent = `${note}: ${noteInfo.name} (${noteInfo.hex})`;
+          updateColorDisplay(note);
         });
       });
       
-      // Populate note list
-      const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-      notes.forEach(note => {
-        const color = getNoteColor(note);
-        const noteInfo = getNoteColor(note, { fullInfo: true });
-        const div = document.createElement('div');
-        div.className = 'note-item';
-        div.style.backgroundColor = color;
-        div.textContent = `${note}: ${noteInfo.name}`;
-        noteList.appendChild(div);
+      // Custom note input handler
+      applyNoteButton.addEventListener('click', function() {
+        const noteValue = customNoteInput.value.trim();
+        if (noteValue) {
+          try {
+            // Check if it's a number
+            if (!isNaN(noteValue)) {
+              updateColorDisplay(parseInt(noteValue));
+            } else {
+              updateColorDisplay(noteValue);
+            }
+          } catch (error) {
+            colorDisplay.style.backgroundColor = '#cccccc';
+            colorDisplay.textContent = `Error: ${error.message}`;
+          }
+        }
       });
+      
+      customNoteInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          applyNoteButton.click();
+        }
+      });
+      
+      // Palette selector
+      paletteSelect.addEventListener('change', function() {
+        currentPalette = this.value;
+        updateNoteList();
+        // Update color display if a note is already selected
+        if (colorDisplay.textContent !== 'Click a key above') {
+          const currentNote = colorDisplay.textContent.split(':')[0].trim();
+          updateColorDisplay(currentNote);
+        }
+      });
+      
+      // Features palette selector
+      featuresPaletteSelect.addEventListener('change', function() {
+        updatePalettePreview(this.value);
+      });
+      
+      // Update the color display
+      function updateColorDisplay(note) {
+        try {
+          const noteInfo = getNoteColor(note, { 
+            paletteId: currentPalette, 
+            fullInfo: true 
+          });
+          
+          colorDisplay.style.backgroundColor = noteInfo.hex;
+          
+          // Format the display text
+          let displayText = '';
+          if (typeof note === 'number') {
+            if (note >= 0 && note <= 11) {
+              displayText = `Pitch Class ${note} (${noteInfo.note}): ${noteInfo.name} (${noteInfo.hex})`;
+            } else if (note >= 0 && note <= 127) {
+              displayText = `MIDI ${note} (${noteInfo.note}): ${noteInfo.name} (${noteInfo.hex})`;
+            } else {
+              displayText = `${note} % 12 = ${((note % 12) + 12) % 12} (${noteInfo.note}): ${noteInfo.name} (${noteInfo.hex})`;
+            }
+          } else {
+            displayText = `${note}: ${noteInfo.name} (${noteInfo.hex})`;
+          }
+          
+          colorDisplay.textContent = displayText;
+        } catch (error) {
+          colorDisplay.style.backgroundColor = '#cccccc';
+          colorDisplay.textContent = `Error: ${error.message}`;
+        }
+      }
+      
+      // Update the note list
+      function updateNoteList() {
+        noteList.innerHTML = '';
+        const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        
+        notes.forEach(note => {
+          const color = getNoteColor(note, { paletteId: currentPalette });
+          const noteInfo = getNoteColor(note, { paletteId: currentPalette, fullInfo: true });
+          const div = document.createElement('div');
+          div.className = 'note-item';
+          div.style.backgroundColor = color;
+          div.textContent = `${note}: ${noteInfo.name}`;
+          noteList.appendChild(div);
+        });
+      }
+      
+      // Populate notation examples
+      function populateNotationExamples() {
+        const examples = [
+          // Standard notes
+          'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B',
+          // Lowercase
+          'c', 'd', 'e', 'f', 'g', 'a', 'b',
+          // Flats
+          'Db', 'Eb', 'Gb', 'Ab', 'Bb',
+          // Symbol flats and sharps
+          'C♭', 'D♭', 'E♭', 'F♭', 'G♭', 'A♭', 'B♭',
+          'C♯', 'D♯', 'E♯', 'F♯', 'G♯', 'A♯', 'B♯',
+          // Latin solfège
+          'do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'ti',
+          // Latin solfège with accidentals
+          'do#', 're#', 'fa#', 'sol#', 'la#',
+          'reb', 'mib', 'solb', 'lab', 'sib',
+          // Accented solfège
+          'dó', 'ré', 'mí', 'fá', 'sól', 'lá', 'sí'
+        ];
+        
+        examples.forEach(ex => {
+          try {
+            const color = getNoteColor(ex, { failSilently: true });
+            if (color) {
+              const div = document.createElement('div');
+              div.className = 'notation-item';
+              div.textContent = ex;
+              div.addEventListener('click', () => updateColorDisplay(ex));
+              notationExamples.appendChild(div);
+            }
+          } catch (error) {
+            // Skip invalid notations
+          }
+        });
+      }
+      
+      // Populate number examples
+      function populateNumberExamples() {
+        const examples = [
+          // Pitch classes
+          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+          // MIDI numbers
+          60, 61, 62, 63, 64, 65,
+          // Negative numbers
+          -1, -2, -3,
+          // Numbers > 11
+          12, 13, 14, 24
+        ];
+        
+        examples.forEach(ex => {
+          const div = document.createElement('div');
+          div.className = 'notation-item';
+          div.textContent = ex.toString();
+          div.addEventListener('click', () => updateColorDisplay(ex));
+          numberExamples.appendChild(div);
+        });
+      }
+      
+      // Update palette preview
+      function updatePalettePreview(paletteId) {
+        palettePreview.innerHTML = '';
+        const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        
+        notes.forEach(note => {
+          const color = getNoteColor(note, { paletteId: paletteId });
+          const noteInfo = getNoteColor(note, { paletteId: paletteId, fullInfo: true });
+          const div = document.createElement('div');
+          div.className = 'note-item';
+          div.style.backgroundColor = color;
+          div.textContent = `${note}: ${noteInfo.name}`;
+          palettePreview.appendChild(div);
+        });
+      }
+      
+      // Initialize the demo
+      updateNoteList();
+      populateNotationExamples();
+      populateNumberExamples();
+      updatePalettePreview('default');
     });
   </script>
 </body>

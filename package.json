@@ -1,7 +1,7 @@
 {
     "name": "note-color",
-    "version": "1.0.0",
-    "description": "A simple package to map musical notes to colors based on Chrome Music Lab",
+    "version": "0.0.1",
+    "description": "A simple package to map musical notes to colors.",
     "type": "module",
     "main": "index.js",
     "scripts": {
@@ -10,8 +10,7 @@
     "keywords": [
       "music",
       "color",
-      "notes",
-      "chromemusiclab",
+      "notes", 
       "midi",
       "piano",
       "visualization"
